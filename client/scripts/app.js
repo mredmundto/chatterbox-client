@@ -46,10 +46,18 @@ app.clearMessages = function() {
 };
 
 app.addMessage = function(message) {
+  // Use the cleanMessage method to replace 
+  // potentially malicious code with escape characters      
+  message.username = app.cleanMessage(message.username);
+  message.text = app.cleanMessage(message.text);
+
   $('#chats').append('<div>' + message.username + ' : ' + message.text + '</div>');
 };
 
 app.addRoom = function(room) {
+  // Check for malicious code in the room name
+  message.roomname = app.cleanMessage(message.roomname);
+  
   $('body').append('<div id="roomSelect"></div>');
   $('#roomSelect').append('<div id="' + room + '"></div>');
 };
@@ -58,6 +66,25 @@ app.displayMessages = function() {
   app.clearMessages(); 
   app.fetch(app.addMessage);
 };
+
+app.cleanMessage = function(message) {
+  // Uses escape characters to sanitze potentially malicious code
+  // that's inserted in message content
+  if (message !== undefined) {
+    message = message.replace(/</g, '&lt');
+    message = message.replace(/>/g, '&gt');
+    message = message.replace(/&/g, '&amp');
+    message = message.replace(/"/g, '&quot');
+    message = message.replace(/'/g, '&#x27');
+    message = message.replace(/\//g, '&#x2F');
+  }
+  return message;
+};
+
+// Start the chat program
+
+app.displayMessages();
+
 
 // var getMessages = function() {
 //   $.get('https://api.parse.com/1/classes/messages', function(retrievedMessages) {
