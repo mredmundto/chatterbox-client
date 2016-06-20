@@ -51,15 +51,18 @@ app.addMessage = function(message) {
   message.username = app.cleanMessage(message.username);
   message.text = app.cleanMessage(message.text);
 
-  $('#chats').append('<div>' + message.username + ' : ' + message.text + '</div>');
+  var msgText = '<div>' + message.username + ' : ' + message.text + '</div>';
+
+  $('#chats').append(msgText);
 };
 
 app.addRoom = function(room) {
   // Check for malicious code in the room name
   message.roomname = app.cleanMessage(message.roomname);
-  
+  var roomText = '<div id="' + room + '"></div>';
   $('body').append('<div id="roomSelect"></div>');
-  $('#roomSelect').append('<div id="' + room + '"></div>');
+
+  $('#roomSelect').append(roomText);
 };
 
 app.displayMessages = function() {
@@ -82,8 +85,8 @@ app.cleanMessage = function(message) {
 };
 
 // Start the chat program
-
 app.displayMessages();
+setInterval(app.displayMessages, 10000);
 
 
 // var getMessages = function() {
