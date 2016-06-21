@@ -8,7 +8,8 @@ var app = {
   init: function() {},
   address: 'https://api.parse.com/1/classes/messages',
   _messageStorage: [],
-  roomnames: ['superLobby']
+  roomnames: ['superLobby'],
+  _friends: []
 };
 
 app.send = function(message) {
@@ -35,6 +36,7 @@ app.fetch = function(address, callback) {
       _.each(app._messageStorage, function(message) {
         callback(message);
       });
+      app.checkForFriends()
     },
     error: function(data) {
       console.log('ERROR: failed to fetch messages', data);
@@ -134,12 +136,31 @@ app.cleanMessage = function(message) {
   return message;
 };
 
+app.checkForFriends = function() {
+  var messages = $('#chats').children();
+
+  _.each(messages, function(msg) {
+    var childNodes = $(msg).children();
+    var name;
+
+    for (var i = 0; i < childNodes.length; i++) {
+      if ($(childNodes[i]).hasClass('username')) {
+        name = childNodes[i];
+      }
+    }
+
+    if (app._friends.indexOf($(name).text()) !== -1) {
+      $(msg).addClass('friend');
+    }
+  });
+};
+
 // jQuery code
 $('document').ready(function() {
   // Display the initial message and periodically update the field
   app.displayMessages();
   $('#userroomname').val('superLobby');
-  setInterval(app.displayMessages, 60000);
+  setInterval(app.displayMessages, 10000);
 
   // Activates the custom message option
   $('#submit-custom-message').on('click', function() {
@@ -168,5 +189,19 @@ $('document').ready(function() {
 
     $('#userroomname').val(roomSelected);
   });
+
+  // Allow users to select friends
+  $(document).on('click', '.username', function() {
+    var user = $(this).text();
+    app._friends.push(user);
+    app.checkForFriends();
+  });
+
+  // WHY DOESN'T THIS CODE WORK?!?!?!
+  // $('.username').click(function() {
+  //   var user = $(this).text();
+  //   console.log('clicked on ' + user);
+  // });
+
 });
 
