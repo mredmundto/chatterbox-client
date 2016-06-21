@@ -19,7 +19,7 @@ app.send = function(message) {
     data: JSON.stringify(message),
     contentType: 'application/json',
     success: function(data) {
-      console.log('Message successfully sent!');
+            console.log('Message successfully sent!');
     },
     error: function(data) {
       console.log('ERROR: failed to send message', data);
@@ -31,18 +31,35 @@ app.fetch = function(address, callback) {
   $.ajax({
     url: address,
     type: 'GET',
+    data: { roomname: 'chatroom'},
     success: function(data) {
       app._messageStorage = data.results;
       _.each(app._messageStorage, function(message) {
         callback(message);
       });
-      app.checkForFriends()
+      app.checkForFriends();
     },
     error: function(data) {
       console.log('ERROR: failed to fetch messages', data);
     }
   });
 };
+
+/* Example of a get request that asks the server to return only
+   data that meets certain qualifications
+
+   $.ajax({
+    url: app.address,
+    type: 'GET',
+    data: "where=" + JSON.stringify({"roomname": "4chan"}),
+    success: function(data) {
+      console.log(data);
+    },
+    error: function(data) {
+      console.log('ERROR: failed to fetch messages', data);
+    }
+  });
+*/
 
 app.clearMessages = function() {
   $('#chats').children().remove();
