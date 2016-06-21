@@ -70,18 +70,8 @@ app.addMessage = function(message) {
     app.roomnames.push(message.roomname);
   }
 
-  // Create a date/time string representation of when the message
-  // was last updated
-
-  var msgTime = new Date(message.updatedAt);
-  msgTime = 'Created on ' + msgTime.getFullYear() + '-' + msgTime.getMonth() + '-' + msgTime.getDay() + 
-            ' at ' + msgTime.getHours() + ':' + msgTime.getMinutes() + ':' + msgTime.getSeconds();
-
   // Create the HTML for the new message
-  var msgText = '<div class="chat room-superLobby room-' + message.roomname + '">' +
-                '<p class="username">' + message.username + 
-                '<p class="usertext">' + message.text + 
-                '<p class="usermessagetime">' + msgTime + '</div>';
+  var msgText = '<div class="room-superLobby room-' + message.roomname + '">' + message.username + ' : ' + message.text + '</div>';
 
   $('#chats').append(msgText);
 };

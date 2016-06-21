@@ -17,10 +17,9 @@ body {
 
 #main h1 {
     margin-top: 0;
-    font-size: 55px;
+    font-size: 35px;
     margin-bottom: 5px;
     padding: 5px;
-    text-align: center;
 }
 
 #main h1 span {
@@ -64,22 +63,10 @@ form input[type=text] {
     padding: 5px;
     margin-bottom: 5px;
     background-color: #eee;
-    border-style: solid;
-    border-width: 1px;
 }
 
 .chat .username {
     font-weight: 800;
-    text-align: center;
-}
-
-.chat .usertext {
-    text-align: center;
-}
-
-.chat .usermessagetime {
-    font-size: 12px;
-    text-align: center;
 }
 
 .chat:hover {
