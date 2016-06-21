@@ -51,7 +51,6 @@ app.addMessage = function(message) {
   // Create the room if doesn't already exist, and place the 
   // message in both the main chat and also the room
 
-
   // Use the cleanMessage method to replace 
   // potentially malicious code with escape characters      
   message.username = app.cleanMessage(message.username);
@@ -104,6 +103,7 @@ app.cleanMessage = function(message) {
 
 // jQuery code
 $('document').ready(function() {
+  // Display the initial message and periodically update the field
   app.displayMessages();
   setInterval(app.displayMessages, 60000);
 
@@ -144,6 +144,4 @@ app.updateRoomMenu = function() {
     var room = '<option value =' + name + '>' + name + '</option>';
     $('#roomSelect').append(room);
   }); 
-
-
 };

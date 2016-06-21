@@ -87,8 +87,8 @@ describe('chatterbox', function() {
       });
 
       it('should be able to add rooms to the DOM', function() {
+        $('#roomSelect').children().remove();
         app.addRoom('superLobby');
-
         expect($('#roomSelect').children().length).to.equal(1);
       });
 
