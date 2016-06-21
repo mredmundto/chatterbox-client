@@ -7,7 +7,8 @@
 var app = {
   init: function() {},
   address: 'https://api.parse.com/1/classes/messages',
-  _messageStorage: []
+  _messageStorage: [],
+  roomnames: ['superLobby']
 };
 
 app.send = function(message) {
@@ -25,9 +26,9 @@ app.send = function(message) {
   });
 };
 
-app.fetch = function(callback) {
+app.fetch = function(address, callback) {
   $.ajax({
-    url: app.address,
+    url: address,
     type: 'GET',
     success: function(data) {
       app._messageStorage = data.results;
@@ -46,28 +47,45 @@ app.clearMessages = function() {
 };
 
 app.addMessage = function(message) {
+  // Check if the message object has a roomname
+  // Create the room if doesn't already exist, and place the 
+  // message in both the main chat and also the room
+
+
   // Use the cleanMessage method to replace 
   // potentially malicious code with escape characters      
   message.username = app.cleanMessage(message.username);
   message.text = app.cleanMessage(message.text);
+  message.roomname = app.cleanMessage(message.roomname);
 
-  var msgText = '<div>' + message.username + ' : ' + message.text + '</div>';
+  // Give a default room name
+  if (message.roomname === undefined ||
+      message.roomname === '' ||
+      message.roomname === 'undefined') {
+    message.roomname = 'superLobby';
+  }
+
+  // Check if the room already exists, if not, create it
+  if (app.roomnames.indexOf(message.roomname) === -1) {
+    app.addRoom(message.roomname);
+    app.roomnames.push(message.roomname);
+  }
+
+  // Create the HTML for the new message
+  var msgText = '<div class="room-superLobby room-' + message.roomname + '">' + message.username + ' : ' + message.text + '</div>';
 
   $('#chats').append(msgText);
 };
 
-app.addRoom = function(room) {
-  // Check for malicious code in the room name
-  message.roomname = app.cleanMessage(message.roomname);
-  var roomText = '<div id="' + room + '"></div>';
-  $('body').append('<div id="roomSelect"></div>');
-
+app.addRoom = function(roomname) {
+  var roomText = '<div id="' + roomname + '"></div>';
   $('#roomSelect').append(roomText);
+  app.updateRoomMenu();
 };
 
 app.displayMessages = function() {
   app.clearMessages(); 
-  app.fetch(app.addMessage);
+  app.fetch(app.address, app.addMessage);
 };
 
 app.cleanMessage = function(message) {
@@ -95,41 +113,52 @@ $('document').ready(function() {
     app.send({
       username: $('#username').val(),
       text: $('#usertext').val()
+      // add roomname key/value
     });
   });
 });
 
+app.updateRoomMenu = function() {
+  console.log(app.roomnames);
+  // First clear the room selection options menu
+  $('#roomAdd').children().remove();
+
+  // Then populate it with names from our roomnames array
+  _.each(app.roomnames, function(name) {
+    var room = '<option value =' + name + '>' + name + '</option>';
+    $('#roomAdd').append(room);
+  }); 
+};
+
+
+// Step 1.  Before adding message to the DOM, check whether the message
+// has a roomname value
+    // If it does, check whether a room with that roomname already exists
+    // If the room already exists, append the message to that room's DIV
+
+    // If that room doesn't exist, add the room to the DOM, and then
+    // place the message inside the newly created room
+
+// Step 2.  Create a dropdown option that lets the user select which 
+// room he would like to view    
 
 
 
-// var getMessages = function() {
-//   $.get('https://api.parse.com/1/classes/messages', function(retrievedMessages) {
-//     displayMessages(retrievedMessages.results);
-//   });
-
-// };
 
 
-// // Appends new messages as elements to the DOM
-// var displayMessages = function(retrievedMessages) {
-//   _.each(retrievedMessages, function(msg) {
-//     var cleanMSG = escapeMessages(msg.text);
-//     var ele = '<div><p>' + cleanMSG + '</p></div>';
-//     $('#chats').prepend(ele);
-//   });
-// };
 
-// // Removes malicious script elements from a message
-// var escapeMessages = function(msg) {
-//   // Use regexp to include escape characters
-//   msg = msg.replace(/</g, '&lt');
-//   msg = msg.replace(/>/g, '&gt');
-//   msg = msg.replace(/&/g, '&amp');
-//   msg = msg.replace(/"/g, '&quot');
-//   msg = msg.replace(/'/g, '&#x27');
-//   msg = msg.replace(/\//g, '&#x2F');
 
-//   return msg;
-// };
 
-// getMessages();
+
+
+
+
+
+
+
+
+
+
+
+
+
