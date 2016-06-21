@@ -111,16 +111,19 @@ $('document').ready(function() {
   $('#submit-custom-message').on('click', function() {
     console.log('user submission made');
 
+    // Send the message to the server
     app.send({
       username: $('#username').val(),
       text: $('#usertext').val(),
-      roomname: $('#roomAdd option:selected').val()
-      // add roomname key/value
+      roomname: $('#roomSelect option:selected').val()
     });
+
+    // Clear the input field for message option
+    $('#usertext').val('');
   });
 
   // Toggle which room the user wants to view
-  $('#roomAdd').change(function() {
+  $('#roomSelect').change(function() {
     var roomSelected = $(this).val(); 
     _.each(app.roomnames, function(room) {
       if (room !== roomSelected) {
@@ -134,46 +137,13 @@ $('document').ready(function() {
 
 app.updateRoomMenu = function() {
   // First clear the room selection options menu
-  $('#roomAdd').children().remove();
+  $('#roomSelect').children().remove();
 
   // Then populate it with names from our roomnames array
   _.each(app.roomnames, function(name) {
     var room = '<option value =' + name + '>' + name + '</option>';
-    $('#roomAdd').append(room);
+    $('#roomSelect').append(room);
   }); 
 
 
 };
-
-
-// Step 1.  Before adding message to the DOM, check whether the message
-// has a roomname value
-    // If it does, check whether a room with that roomname already exists
-    // If the room already exists, append the message to that room's DIV
-
-    // If that room doesn't exist, add the room to the DOM, and then
-    // place the message inside the newly created room
-
-// Step 2.  Create a dropdown option that lets the user select which 
-// room he would like to view    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
