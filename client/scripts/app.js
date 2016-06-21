@@ -55,7 +55,7 @@ app.addMessage = function(message) {
   // potentially malicious code with escape characters      
   message.username = app.cleanMessage(message.username);
   message.text = app.cleanMessage(message.text);
-  message.roomname = app.cleanMessage(message.roomname);
+  message.roomname = app.convertRoomName(message.roomname);
 
   // Give a default room name
   if (message.roomname === undefined ||
@@ -86,8 +86,23 @@ app.addMessage = function(message) {
 
 app.addRoom = function(roomname) {
   var roomText = '<div id="' + roomname + '"></div>';
+  console.log(roomText);
   $('#roomSelect').append(roomText);
   app.updateRoomMenu();
+};
+
+app.convertRoomName = function(roomname) {
+  if (roomname !== undefined && roomname !== null) {
+    roomname = roomname.replace(/</g, '');
+    roomname = roomname.replace(/>/g, '');
+    roomname = roomname.replace(/&/g, '');
+    roomname = roomname.replace(/"/g, '');
+    roomname = roomname.replace(/'/g, '');
+    roomname = roomname.replace(/\//g, '');
+    roomname = roomname.split(' ').join('');
+  }
+
+  return roomname;
 };
 
 app.displayMessages = function() {
@@ -133,15 +148,29 @@ $('document').ready(function() {
   // Toggle which room the user wants to view
   $('#roomSelect').change(function() {
     var roomSelected = $(this).val(); 
+
+    if (roomSelected === 'newRoom') {
+      app.addNewRoom();   
+    } 
     _.each(app.roomnames, function(room) {
       if (room !== roomSelected) {
         $('.room-' + room).hide();
       }
     });
-
     $('.room-' + roomSelected).show();
+
   });
 });
+app.addNewRoom = function() {
+  $('#userMessage').append('New Chat Room:<br><input id="usernewroomname" type="text" name="usernewroomname"><br>');
+  $('#submit-custom-message').on('click', function() {
+    app.send({
+      username: $('#username').val(),
+      text: $('#usertext').val(),
+      roomname: $('#usernewroomname').val()
+    });
+  }); 
+};
 
 app.updateRoomMenu = function() {
   // First clear the room selection options menu
@@ -151,5 +180,7 @@ app.updateRoomMenu = function() {
   _.each(app.roomnames, function(name) {
     var room = '<option value =' + name + '>' + name + '</option>';
     $('#roomSelect').append(room);
-  }); 
+  });
+  
+  $('#roomSelect').append('<option value = newRoom> New Room </option>'); 
 };
