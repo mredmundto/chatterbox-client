@@ -31,13 +31,14 @@ app.fetch = function(address, callback) {
   $.ajax({
     url: address,
     type: 'GET',
-    data: { roomname: 'chatroom'},
+    //data: 'where=' + JSON.stringify({ roomname: '4chan'}),
     success: function(data) {
       app._messageStorage = data.results;
       _.each(app._messageStorage, function(message) {
         callback(message);
       });
       app.checkForFriends();
+      //app.init();
     },
     error: function(data) {
       console.log('ERROR: failed to fetch messages', data);
@@ -172,12 +173,27 @@ app.checkForFriends = function() {
   });
 };
 
+app.init = function() {
+  app.clearMessages();
+  
+  // show messages
+  _.each(app._messageStorage, function(msg) {
+    app.addMessage(msg);
+  });
+
+  // show available rooms
+  _.each(app.roomnames, function(rm) {
+    var rmbutton = '<p>' + rm + '</p>';
+    $('#rooms').append(rmbutton);
+  });
+};
+
 // jQuery code
 $('document').ready(function() {
   // Display the initial message and periodically update the field
   app.displayMessages();
   $('#userroomname').val('superLobby');
-  setInterval(app.displayMessages, 10000);
+  //setInterval(app.displayMessages, 60000);
 
   // Activates the custom message option
   $('#submit-custom-message').on('click', function() {
