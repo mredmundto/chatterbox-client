@@ -86,7 +86,6 @@ app.addMessage = function(message) {
 
 app.addRoom = function(roomname) {
   var roomText = '<div id="' + roomname + '"></div>';
-  console.log(roomText);
   $('#roomSelect').append(roomText);
   app.updateRoomMenu();
 };
@@ -103,6 +102,17 @@ app.convertRoomName = function(roomname) {
   }
 
   return roomname;
+};
+
+app.updateRoomMenu = function() {
+  // First clear the room selection options menu
+  $('#roomSelect').children().remove();
+
+  // Then populate it with names from our roomnames array
+  _.each(app.roomnames, function(name) {
+    var room = '<option value =' + name + '>' + name + '</option>';
+    $('#roomSelect').append(room);
+  }); 
 };
 
 app.displayMessages = function() {
@@ -128,17 +138,17 @@ app.cleanMessage = function(message) {
 $('document').ready(function() {
   // Display the initial message and periodically update the field
   app.displayMessages();
+  $('#userroomname').val('superLobby');
   setInterval(app.displayMessages, 60000);
 
   // Activates the custom message option
   $('#submit-custom-message').on('click', function() {
-    console.log('user submission made');
 
     // Send the message to the server
     app.send({
       username: $('#username').val(),
       text: $('#usertext').val(),
-      roomname: $('#roomSelect option:selected').val()
+      roomname: $('#userroomname').val()
     });
 
     // Clear the input field for message option
@@ -149,9 +159,6 @@ $('document').ready(function() {
   $('#roomSelect').change(function() {
     var roomSelected = $(this).val(); 
 
-    if (roomSelected === 'newRoom') {
-      app.addNewRoom();   
-    } 
     _.each(app.roomnames, function(room) {
       if (room !== roomSelected) {
         $('.room-' + room).hide();
@@ -159,28 +166,7 @@ $('document').ready(function() {
     });
     $('.room-' + roomSelected).show();
 
+    $('#userroomname').val(roomSelected);
   });
 });
-app.addNewRoom = function() {
-  $('#userMessage').append('New Chat Room:<br><input id="usernewroomname" type="text" name="usernewroomname"><br>');
-  $('#submit-custom-message').on('click', function() {
-    app.send({
-      username: $('#username').val(),
-      text: $('#usertext').val(),
-      roomname: $('#usernewroomname').val()
-    });
-  }); 
-};
 
-app.updateRoomMenu = function() {
-  // First clear the room selection options menu
-  $('#roomSelect').children().remove();
-
-  // Then populate it with names from our roomnames array
-  _.each(app.roomnames, function(name) {
-    var room = '<option value =' + name + '>' + name + '</option>';
-    $('#roomSelect').append(room);
-  });
-  
-  $('#roomSelect').append('<option value = newRoom> New Room </option>'); 
-};
