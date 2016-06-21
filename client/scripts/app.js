@@ -84,9 +84,22 @@ app.cleanMessage = function(message) {
   return message;
 };
 
-// Start the chat program
-app.displayMessages();
-setInterval(app.displayMessages, 10000);
+// jQuery code
+$('document').ready(function() {
+  app.displayMessages();
+  setInterval(app.displayMessages, 60000);
+
+  $('#submit-custom-message').on('click', function() {
+    console.log('user submission made');
+
+    app.send({
+      username: $('#username').val(),
+      text: $('#usertext').val()
+    });
+  });
+});
+
+
 
 
 // var getMessages = function() {
