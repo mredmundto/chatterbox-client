@@ -91,7 +91,7 @@ app.displayMessages = function() {
 app.cleanMessage = function(message) {
   // Uses escape characters to sanitze potentially malicious code
   // that's inserted in message content
-  if (message !== undefined) {
+  if (message !== undefined && message !== null) {
     message = message.replace(/</g, '&lt');
     message = message.replace(/>/g, '&gt');
     message = message.replace(/&/g, '&amp');
@@ -107,19 +107,32 @@ $('document').ready(function() {
   app.displayMessages();
   setInterval(app.displayMessages, 60000);
 
+  // Activates the custom message option
   $('#submit-custom-message').on('click', function() {
     console.log('user submission made');
 
     app.send({
       username: $('#username').val(),
-      text: $('#usertext').val()
+      text: $('#usertext').val(),
+      roomname: $('#roomAdd option:selected').val()
       // add roomname key/value
     });
+  });
+
+  // Toggle which room the user wants to view
+  $('#roomAdd').change(function() {
+    var roomSelected = $(this).val(); 
+    _.each(app.roomnames, function(room) {
+      if (room !== roomSelected) {
+        $('.room-' + room).hide();
+      }
+    });
+
+    $('.room-' + roomSelected).show();
   });
 });
 
 app.updateRoomMenu = function() {
-  console.log(app.roomnames);
   // First clear the room selection options menu
   $('#roomAdd').children().remove();
 
@@ -128,6 +141,8 @@ app.updateRoomMenu = function() {
     var room = '<option value =' + name + '>' + name + '</option>';
     $('#roomAdd').append(room);
   }); 
+
+
 };
 
 
